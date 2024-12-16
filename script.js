@@ -112,7 +112,7 @@ function printAndClear() {
     // الشعار
     const logoHTML = `
         <div style="text-align: center; margin-bottom: 20px;">
-            <img src="banga_logo.png" alt="شعار الشركة" style="max-width: 100px;">
+            <img src="bangalogo.png" alt="شعار الشركة" style="max-width: 100px;">
         </div>
     `;
 
