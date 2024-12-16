@@ -107,9 +107,7 @@ function printAndClear() {
     const table = document.getElementById('order-table');
     const totalPriceElement = document.getElementById('total-price');
     const totalAmount = parseFloat(totalPriceElement.textContent.split(" ")[0]); // الإجمالي الكلي
-    let madaAmount = 0; // المبلغ المدفوع عبر مدى
-    let cashAmount = 0; // المتبقي كاش
-
+    
     // جلب التاريخ والوقت الحالي
     const currentDate = new Date();
     const formattedDate = currentDate.toLocaleDateString('ar-SA');
@@ -118,7 +116,7 @@ function printAndClear() {
     // الشعار
     const logoHTML = `
         <div style="text-align: center; margin-bottom: 20px;">
-            <img src="logo.png" alt="شعار الشركة" style="max-width: 100px;">
+            <img src="bangalogo.png" alt="شعار الشركة" style="max-width: 100px;">
         </div>
     `;
 
@@ -127,15 +125,6 @@ function printAndClear() {
         <div style="text-align: center; margin-bottom: 20px; font-size: 14px;">
             <strong>تاريخ الطلب:</strong> ${formattedDate} &nbsp;&nbsp; 
             <strong>وقت الطلب:</strong> ${formattedTime}
-        </div>
-    `;
-
-    // النص الخاص بطريقة الدفع
-    const paymentMethodHTML = `
-        <div style="text-align: center; margin-top: 20px; font-size: 14px;">
-            <strong>طريقة الدفع:</strong> ${selectedPaymentMethod} <br>
-            ${selectedPaymentMethod === "مدى" ? `<strong>مدى:</strong> ${madaAmount.toFixed(2)} ريال<br>` : ""}
-            ${cashAmount > 0 ? `<strong>كاش:</strong> ${cashAmount.toFixed(2)} ريال<br>` : ""}
         </div>
     `;
 
@@ -185,8 +174,7 @@ function printAndClear() {
         <body>
             ${logoHTML}
             ${dateAndTimeHTML}
-            ${table.outerHTML}
-            ${paymentMethodHTML} <!-- إضافة طريقة الدفع -->
+            ${table.outerHTML
             ${footerHTML}
         </body>
         </html>
@@ -199,7 +187,7 @@ function printAndClear() {
 
     // مسح الجدول وإعادة تعيين طريقة الدفع
     clearTable();
-    selectedPaymentMethod = ""; // إعادة تعيين طريقة الدفع
+   
     orderNumber++;
     document.getElementById('order-number').textContent = orderNumber;
 }
