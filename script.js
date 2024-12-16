@@ -102,17 +102,48 @@ function clearTable() {
 }
 
 function printAndClear() {
+    if (!selectedPaymentMethod) {
+        alert("يرجى اختيار طريقة الدفع قبل الطباعة.");
+        return;
+    }
+
     const table = document.getElementById('order-table');
+    const totalPriceElement = document.getElementById('total-price');
+    const totalAmount = parseFloat(totalPriceElement.textContent.split(" ")[0]); // الإجمالي الكلي
+    let madaAmount = 0; // المبلغ المدفوع عبر مدى
+    let cashAmount = 0; // المتبقي كاش
+
+    // التحقق من طريقة الدفع
+    if (selectedPaymentMethod === "مدى") {
+        const madaInput = document.getElementById('mada-amount');
+        madaAmount = parseFloat(madaInput.value);
+
+        if (isNaN(madaAmount) || madaAmount <= 0) {
+            alert("يرجى إدخال مبلغ صالح لمدى.");
+            return;
+        }
+
+        if (madaAmount > totalAmount) {
+            alert("المبلغ المدفوع عبر مدى لا يمكن أن يكون أكبر من الإجمالي.");
+            return;
+        }
+
+        // حساب المتبقي كاش إذا كان المبلغ المدفوع عبر مدى أقل من الإجمالي
+        cashAmount = totalAmount - madaAmount;
+    } else {
+        // إذا كانت طريقة الدفع "كاش"، يتم دفع كامل المبلغ نقدًا
+        cashAmount = totalAmount;
+    }
 
     // جلب التاريخ والوقت الحالي
     const currentDate = new Date();
-    const formattedDate = currentDate.toLocaleDateString('ar-SA'); // تنسيق التاريخ
-    const formattedTime = currentDate.toLocaleTimeString('ar-SA'); // تنسيق الوقت
+    const formattedDate = currentDate.toLocaleDateString('ar-SA');
+    const formattedTime = currentDate.toLocaleTimeString('ar-SA');
 
     // الشعار
     const logoHTML = `
         <div style="text-align: center; margin-bottom: 20px;">
-            <img src="bangalogo.png" alt="شعار الشركة" style="max-width: 100px;">
+            <img src="logo.png" alt="شعار الشركة" style="max-width: 100px;">
         </div>
     `;
 
@@ -121,6 +152,15 @@ function printAndClear() {
         <div style="text-align: center; margin-bottom: 20px; font-size: 14px;">
             <strong>تاريخ الطلب:</strong> ${formattedDate} &nbsp;&nbsp; 
             <strong>وقت الطلب:</strong> ${formattedTime}
+        </div>
+    `;
+
+    // النص الخاص بطريقة الدفع
+    const paymentMethodHTML = `
+        <div style="text-align: center; margin-top: 20px; font-size: 14px;">
+            <strong>طريقة الدفع:</strong> ${selectedPaymentMethod} <br>
+            ${selectedPaymentMethod === "مدى" ? `<strong>مدى:</strong> ${madaAmount.toFixed(2)} ريال<br>` : ""}
+            ${cashAmount > 0 ? `<strong>كاش:</strong> ${cashAmount.toFixed(2)} ريال<br>` : ""}
         </div>
     `;
 
@@ -135,6 +175,7 @@ function printAndClear() {
     const deleteCells = Array.from(table.querySelectorAll('thead tr:nth-child(2) th:nth-child(4), tbody tr td:nth-child(4), tfoot tr td:nth-child(4)'));
     deleteCells.forEach(cell => cell.style.display = 'none');
 
+    // فتح نافذة للطباعة
     const newWindow = window.open("", "", "width=800,height=600");
     newWindow.document.write(`
         <html>
@@ -168,8 +209,9 @@ function printAndClear() {
         </head>
         <body>
             ${logoHTML}
-            ${dateAndTimeHTML} <!-- إضافة التاريخ والوقت -->
+            ${dateAndTimeHTML}
             ${table.outerHTML}
+            ${paymentMethodHTML} <!-- إضافة طريقة الدفع -->
             ${footerHTML}
         </body>
         </html>
@@ -180,29 +222,12 @@ function printAndClear() {
     // إعادة عمود الحذف
     deleteCells.forEach(cell => cell.style.display = '');
 
+    // مسح الجدول وإعادة تعيين طريقة الدفع
     clearTable();
+    selectedPaymentMethod = ""; // إعادة تعيين طريقة الدفع
     orderNumber++;
     document.getElementById('order-number').textContent = orderNumber;
 }
-
-
-// وظيفة لحذف جميع الطلبات
-function deleteAllOrders() {
-    // عرض رسالة تأكيد
-    const confirmation = confirm("سيتم حذف جميع الطلبات السابقة. هل أنت متأكد؟");
-    if (confirmation) {
-        // مسح الطلبات من Local Storage
-        localStorage.removeItem('orders');
-
-        // إعادة تحميل الصفحة لتحديث العرض
-        alert("تم حذف جميع الطلبات بنجاح!");
-        location.reload(); // إعادة تحميل الصفحة
-    }
-}
-
-// إضافة حدث عند الضغط على زر الحذف
-document.getElementById('delete-orders-btn').addEventListener('click', deleteAllOrders);
-
 
 function addCustomPriceProduct() {
     // اسم المنتج الافتراضي
