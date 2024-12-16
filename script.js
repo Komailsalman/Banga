@@ -102,38 +102,13 @@ function clearTable() {
 }
 
 function printAndClear() {
-    if (!selectedPaymentMethod) {
-        alert("يرجى اختيار طريقة الدفع قبل الطباعة.");
-        return;
-    }
+    
 
     const table = document.getElementById('order-table');
     const totalPriceElement = document.getElementById('total-price');
     const totalAmount = parseFloat(totalPriceElement.textContent.split(" ")[0]); // الإجمالي الكلي
     let madaAmount = 0; // المبلغ المدفوع عبر مدى
     let cashAmount = 0; // المتبقي كاش
-
-    // التحقق من طريقة الدفع
-    if (selectedPaymentMethod === "مدى") {
-        const madaInput = document.getElementById('mada-amount');
-        madaAmount = parseFloat(madaInput.value);
-
-        if (isNaN(madaAmount) || madaAmount <= 0) {
-            alert("يرجى إدخال مبلغ صالح لمدى.");
-            return;
-        }
-
-        if (madaAmount > totalAmount) {
-            alert("المبلغ المدفوع عبر مدى لا يمكن أن يكون أكبر من الإجمالي.");
-            return;
-        }
-
-        // حساب المتبقي كاش إذا كان المبلغ المدفوع عبر مدى أقل من الإجمالي
-        cashAmount = totalAmount - madaAmount;
-    } else {
-        // إذا كانت طريقة الدفع "كاش"، يتم دفع كامل المبلغ نقدًا
-        cashAmount = totalAmount;
-    }
 
     // جلب التاريخ والوقت الحالي
     const currentDate = new Date();
