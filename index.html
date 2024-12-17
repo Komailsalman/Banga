@@ -138,33 +138,3 @@
 <a href="saved-orders.html" style="text-decoration: none; font-size: 18px; color: #007BFF;">عرض الطلبات السابقة</a>
 
 
-
-
-
-
-
-<div style="margin-top: 20px; text-align: center;">
-    <h3>اختيار طريقة الدفع</h3>
-    <button onclick="selectPaymentMethod('مدى')" class="payment-button">مدى</button>
-    <button onclick="selectPaymentMethod('كاش')" class="payment-button">كاش</button>
-    <div id="mada-input-container" style="display: none; margin-top: 10px;">
-        <label for="mada-amount">المبلغ المدفوع عبر مدى:</label>
-        <input type="number" id="mada-amount" min="0" step="0.01" style="padding: 5px; width: 100px;">
-    </div>
-</div>
-
-
-function addToReports(productName, quantity, price) {
-    const reports = JSON.parse(localStorage.getItem('reports')) || [];
-
-    const newOrder = {
-        id: reports.length + 1, // رقم الطلب
-        date: new Date().toISOString().split('T')[0], // التاريخ
-        payment: selectedPaymentMethod || "كاش", // طريقة الدفع
-        total: price * quantity // الإجمالي
-    };
-
-    reports.push(newOrder);
-    localStorage.setItem('reports', JSON.stringify(reports));
-}
-
