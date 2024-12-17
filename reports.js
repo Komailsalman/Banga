@@ -7,10 +7,11 @@ const orders = [
 
 let chart;
 
-// عرض البيانات الأولية عند تحميل الصفحة
+// عند تحميل الصفحة، اقرأ البيانات
 window.onload = function () {
-    populateTable(orders);
-    renderChart(orders);
+    const reports = JSON.parse(localStorage.getItem('reports')) || [];
+    populateTable(reports);
+    renderChart(reports);
 };
 
 // تطبيق الفلاتر
@@ -19,38 +20,37 @@ function applyFilters() {
     const endDate = document.getElementById("end-date").value;
     const paymentMethod = document.getElementById("payment-filter").value;
 
-    let filteredOrders = orders;
+    let reports = JSON.parse(localStorage.getItem('reports')) || [];
 
-    // فلتر حسب التاريخ
+    // فلترة البيانات
     if (startDate) {
-        filteredOrders = filteredOrders.filter(order => order.date >= startDate);
+        reports = reports.filter(report => report.date >= startDate);
     }
 
     if (endDate) {
-        filteredOrders = filteredOrders.filter(order => order.date <= endDate);
+        reports = reports.filter(report => report.date <= endDate);
     }
 
-    // فلتر حسب طريقة الدفع
     if (paymentMethod !== "all") {
-        filteredOrders = filteredOrders.filter(order => order.payment === paymentMethod);
+        reports = reports.filter(report => report.payment === paymentMethod);
     }
 
-    populateTable(filteredOrders);
-    renderChart(filteredOrders);
+    populateTable(reports);
+    renderChart(reports);
 }
 
-// تعبئة الجدول
+// تعبئة الجدول بالبيانات
 function populateTable(data) {
     const tableBody = document.getElementById("report-table").getElementsByTagName("tbody")[0];
-    tableBody.innerHTML = ""; // مسح البيانات السابقة
+    tableBody.innerHTML = "";
 
-    data.forEach(order => {
+    data.forEach(report => {
         const row = `
             <tr>
-                <td>${order.id}</td>
-                <td>${order.date}</td>
-                <td>${order.payment}</td>
-                <td>${order.total} ريال</td>
+                <td>${report.id}</td>
+                <td>${report.date}</td>
+                <td>${report.payment}</td>
+                <td>${report.total} ريال</td>
             </tr>
         `;
         tableBody.innerHTML += row;
@@ -60,14 +60,14 @@ function populateTable(data) {
 // رسم الرسم البياني
 function renderChart(data) {
     const totals = {
-        مدى: data.filter(order => order.payment === "مدى").reduce((sum, order) => sum + order.total, 0),
-        كاش: data.filter(order => order.payment === "كاش").reduce((sum, order) => sum + order.total, 0)
+        مدى: data.filter(report => report.payment === "مدى").reduce((sum, report) => sum + report.total, 0),
+        كاش: data.filter(report => report.payment === "كاش").reduce((sum, report) => sum + report.total, 0)
     };
 
     const ctx = document.getElementById("ordersChart").getContext("2d");
 
     if (chart) {
-        chart.destroy(); // حذف الرسم البياني السابق
+        chart.destroy();
     }
 
     chart = new Chart(ctx, {
