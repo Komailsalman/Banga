@@ -5,42 +5,115 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>حقيبة الهدية</title>
   <style>
-    body { margin: 0; padding: 0; direction: rtl; font-family: sans-serif; }
+    body {
+      margin: 0;
+      padding: 0;
+      direction: rtl;
+      font-family: sans-serif;
+      background-color: #aee1f9;
+    }
 
     #game {
       position: relative;
       width: 100%;
       height: 100vh;
       overflow: hidden;
-      background: url('https://t4.ftcdn.net/jpg/02/60/87/13/360_F_260871388_tP2rz0cNdJgCGe4OY9GcBlOJ3pKrrLbg.jpg') repeat-x;
-      background-size: cover;
-      animation: scroll 12s linear infinite;
     }
 
-    @keyframes scroll {
-      from { background-position-x: 0; }
-      to { background-position-x: -1000px; }
+    /* الشارع */
+    #road {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      height: 40%;
+      background: #444;
     }
 
+    /* خطوط الطريق */
+    .line {
+      position: absolute;
+      width: 50px;
+      height: 10px;
+      background: #fff;
+      top: 50%;
+      transform: translateY(-50%);
+      animation: moveLine 2s linear infinite;
+    }
+
+    @keyframes moveLine {
+      from { right: -60px; }
+      to { right: 110%; }
+    }
+
+    /* شخصية الطفل */
     #player {
       position: absolute;
-      bottom: 10%;
+      bottom: 40%;
       left: 10%;
-      width: 100px;
-      height: 160px;
-      background: url('https://i.ibb.co/Nsz59J1/boy.png') center/cover no-repeat;
+      width: 60px;
+      height: 120px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
+    #player .head {
+      width: 40px;
+      height: 40px;
+      background: #fdd;
+      border-radius: 50%;
+      border: 2px solid #333;
+    }
+
+    #player .body {
+      width: 30px;
+      height: 70px;
+      background: yellow;
+      border-radius: 10px;
+      margin-top: 5px;
+    }
+
+    /* الرجل (يعطي الهدية) */
     #enemy {
       position: absolute;
-      bottom: 10%;
-      right: -150px;
-      width: 100px;
-      height: 160px;
-      transition: right 0.8s ease-in;
-      background: url('https://i.ibb.co/xDvBDnb/stranger1.png') center/cover no-repeat;
+      bottom: 40%;
+      right: -100px;
+      width: 60px;
+      height: 120px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: right 0.5s ease-in-out;
     }
 
+    #enemy .head {
+      width: 40px;
+      height: 40px;
+      background: #ccc;
+      border-radius: 50%;
+      border: 2px solid #333;
+    }
+
+    #enemy .body {
+      width: 30px;
+      height: 70px;
+      background: #777;
+      border-radius: 10px;
+      margin-top: 5px;
+      position: relative;
+    }
+
+    #enemy .gift {
+      position: absolute;
+      top: 10px;
+      right: -20px;
+      width: 20px;
+      height: 20px;
+      background: red;
+      border-radius: 4px;
+    }
+
+    /* الأزرار */
     #buttons {
       position: absolute;
       bottom: 5%;
@@ -75,46 +148,62 @@
 </head>
 <body>
   <div id="game">
-    <div id="player"></div>
-    <div id="enemy"></div>
+    <div id="player">
+      <div class="head"></div>
+      <div class="body"></div>
+    </div>
+
+    <div id="enemy">
+      <div class="head"></div>
+      <div class="body">
+        <div class="gift"></div>
+      </div>
+    </div>
+
+    <div id="road">
+      <div class="line" style="animation-delay: 0s"></div>
+      <div class="line" style="animation-delay: 1s; top: 60%"></div>
+      <div class="line" style="animation-delay: 2s; top: 70%"></div>
+    </div>
+
     <div id="buttons">
       <button id="accept">أقبل الهدية</button>
       <button id="reject">أرفض</button>
     </div>
+
     <div id="msg"></div>
   </div>
 
   <script>
-    const enemy = document.getElementById('enemy');
-    const msg = document.getElementById('msg');
-    const known = ['father.png', 'uncle.png']; // فقط هذه الصور ترفعها أنت
+    const enemy = document.getElementById("enemy");
+    const msg = document.getElementById("msg");
+    const known = ["father.png", "uncle.png"]; // فقط للتمييز البرمجي
     let isKnown = false;
 
     function spawn() {
       isKnown = Math.random() < 0.5;
-      const img = isKnown
-        ? known[Math.floor(Math.random() * known.length)]
-        : 'https://i.ibb.co/xDvBDnb/stranger1.png';
-      enemy.style.backgroundImage = `url('${img}')`;
-      enemy.style.right = '20%';
+      // تغيير لون الرأس حسب إذا معروف أو غريب
+      enemy.querySelector(".head").style.backgroundColor = isKnown ? "#8bc34a" : "#ccc";
+      enemy.style.right = "20%";
     }
 
     function decide(choice) {
       const correct =
-        (isKnown && choice === 'accept') ||
-        (!isKnown && choice === 'reject');
-      msg.innerText = correct ? 'أحسنت!' : 'خطأ! هذا غريب!';
-      msg.style.color = correct ? 'green' : 'red';
-      msg.style.display = 'block';
+        (isKnown && choice === "accept") ||
+        (!isKnown && choice === "reject");
+      msg.innerText = correct ? "أحسنت!" : "خطأ! هذا غريب!";
+      msg.style.color = correct ? "green" : "red";
+      msg.style.display = "block";
       setTimeout(() => {
-        msg.style.display = 'none';
-        enemy.style.right = '-150px';
+        msg.style.display = "none";
+        enemy.style.right = "-100px";
         setTimeout(spawn, 800);
       }, 1500);
     }
 
-    document.getElementById('accept').onclick = () => decide('accept');
-    document.getElementById('reject').onclick = () => decide('reject');
+    document.getElementById("accept").onclick = () => decide("accept");
+    document.getElementById("reject").onclick = () => decide("reject");
+
     spawn();
   </script>
 </body>
