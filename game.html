@@ -3,14 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>حقيبة الهدايا</title>
+  <title>حقيبة الهدية</title>
   <style>
     body {
       margin: 0;
       padding: 0;
       direction: rtl;
       font-family: sans-serif;
-      background: linear-gradient(to bottom, #d0f0ff, #ffffff);
     }
 
     #game-container {
@@ -18,6 +17,14 @@
       width: 100%;
       height: 100vh;
       overflow: hidden;
+      background: url('road.png') repeat-x;
+      background-size: cover;
+      animation: scrollRoad 10s linear infinite;
+    }
+
+    @keyframes scrollRoad {
+      from { background-position-x: 0; }
+      to { background-position-x: -1000px; }
     }
 
     #player {
@@ -35,12 +42,24 @@
       bottom: 10%;
       right: -100px;
       width: 80px;
-      height: 120px;
-      background-color: #aaa;
-      border-radius: 10px;
+      height: 160px;
       transition: right 0.5s linear;
+    }
+
+    #enemy .face {
+      width: 80px;
+      height: 60px;
+      background-color: #ccc;
+      border-radius: 10px 10px 0 0;
       background-size: cover;
       background-position: center;
+    }
+
+    #enemy .body {
+      width: 80px;
+      height: 100px;
+      background-color: #888;
+      border-radius: 0 0 10px 10px;
     }
 
     #buttons {
@@ -73,7 +92,7 @@
 
     #message {
       position: absolute;
-      top: 10%;
+      top: 8%;
       width: 100%;
       text-align: center;
       font-size: 2rem;
@@ -85,7 +104,10 @@
 <body>
   <div id="game-container">
     <div id="player"></div>
-    <div id="enemy"></div>
+    <div id="enemy">
+      <div class="face"></div>
+      <div class="body"></div>
+    </div>
     <div id="buttons">
       <button id="acceptBtn">أقبل الهدية</button>
       <button id="rejectBtn">أرفض</button>
@@ -95,12 +117,12 @@
 
   <script>
     const enemy = document.getElementById("enemy");
+    const faceDiv = document.querySelector("#enemy .face");
     const acceptBtn = document.getElementById("acceptBtn");
     const rejectBtn = document.getElementById("rejectBtn");
     const message = document.getElementById("message");
 
-    // استبدل هذه الأسماء بأسماء الصور التي تضعها في نفس المجلد
-    const knownFaces = ["father.png", "uncle.png"];
+    const knownFaces = ["father.png", "uncle.png"]; // ضع صور الأشخاص المعروفين
     let currentFace = "";
     let isKnown = false;
 
@@ -111,7 +133,8 @@
         ? knownFaces[Math.floor(Math.random() * knownFaces.length)]
         : "stranger.png";
 
-      enemy.style.backgroundImage = `url('${currentFace}')`;
+      faceDiv.style.backgroundImage = `url('${currentFace}')`;
+
       enemy.style.right = "20%";
     }
 
@@ -129,7 +152,7 @@
       setTimeout(() => {
         message.style.display = "none";
         enemy.style.right = "-100px";
-        setTimeout(spawnEnemy, 1000);
+        setTimeout(spawnEnemy, 800);
       }, 1500);
     }
 
