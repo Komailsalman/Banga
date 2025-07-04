@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>حقيبة الهدايا</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      direction: rtl;
+      font-family: sans-serif;
+      background: linear-gradient(to bottom, #d0f0ff, #ffffff);
+    }
+
+    #game-container {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    #player {
+      position: absolute;
+      bottom: 10%;
+      left: 10%;
+      width: 80px;
+      height: 120px;
+      background-color: #ffcc00;
+      border-radius: 10px;
+    }
+
+    #enemy {
+      position: absolute;
+      bottom: 10%;
+      right: -100px;
+      width: 80px;
+      height: 120px;
+      background-color: #aaa;
+      border-radius: 10px;
+      transition: right 0.5s linear;
+      background-size: cover;
+      background-position: center;
+    }
+
+    #buttons {
+      position: absolute;
+      bottom: 5%;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 20px;
+      z-index: 10;
+    }
+
+    #buttons button {
+      font-size: 1.2rem;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    #acceptBtn {
+      background-color: #4caf50;
+      color: white;
+    }
+
+    #rejectBtn {
+      background-color: #f44336;
+      color: white;
+    }
+
+    #message {
+      position: absolute;
+      top: 10%;
+      width: 100%;
+      text-align: center;
+      font-size: 2rem;
+      color: red;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div id="game-container">
+    <div id="player"></div>
+    <div id="enemy"></div>
+    <div id="buttons">
+      <button id="acceptBtn">أقبل الهدية</button>
+      <button id="rejectBtn">أرفض</button>
+    </div>
+    <div id="message"></div>
+  </div>
+
+  <script>
+    const enemy = document.getElementById("enemy");
+    const acceptBtn = document.getElementById("acceptBtn");
+    const rejectBtn = document.getElementById("rejectBtn");
+    const message = document.getElementById("message");
+
+    // استبدل هذه الأسماء بأسماء الصور التي تضعها في نفس المجلد
+    const knownFaces = ["father.png", "uncle.png"];
+    let currentFace = "";
+    let isKnown = false;
+
+    function spawnEnemy() {
+      const isKnownFace = Math.random() < 0.5;
+      isKnown = isKnownFace;
+      currentFace = isKnownFace
+        ? knownFaces[Math.floor(Math.random() * knownFaces.length)]
+        : "stranger.png";
+
+      enemy.style.backgroundImage = `url('${currentFace}')`;
+      enemy.style.right = "20%";
+    }
+
+    function handleChoice(choice) {
+      if ((isKnown && choice === "accept") || (!isKnown && choice === "reject")) {
+        message.innerText = "أحسنت!";
+        message.style.color = "green";
+      } else {
+        message.innerText = "خطأ! هذا غريب!";
+        message.style.color = "red";
+      }
+
+      message.style.display = "block";
+
+      setTimeout(() => {
+        message.style.display = "none";
+        enemy.style.right = "-100px";
+        setTimeout(spawnEnemy, 1000);
+      }, 1500);
+    }
+
+    acceptBtn.onclick = () => handleChoice("accept");
+    rejectBtn.onclick = () => handleChoice("reject");
+
+    spawnEnemy();
+  </script>
+</body>
+</html>
