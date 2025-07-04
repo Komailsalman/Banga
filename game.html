@@ -3,36 +3,73 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>حقيبة الهدايا</title>
+  <title>حقيبة الهدية</title>
   <style>
     body { margin: 0; padding: 0; direction: rtl; font-family: sans-serif; }
-    #game { position: relative; width:100%; height:100vh; overflow:hidden;
-            background: url('road.png') repeat-x; background-size: cover;
-            animation: scroll 12s linear infinite; }
-    @keyframes scroll { from { background-position-x:0; } to { background-position-x:-800px; } }
+
+    #game {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      overflow: hidden;
+      background: url('https://t4.ftcdn.net/jpg/02/60/87/13/360_F_260871388_tP2rz0cNdJgCGe4OY9GcBlOJ3pKrrLbg.jpg') repeat-x;
+      background-size: cover;
+      animation: scroll 12s linear infinite;
+    }
+
+    @keyframes scroll {
+      from { background-position-x: 0; }
+      to { background-position-x: -1000px; }
+    }
+
     #player {
-      position:absolute; bottom:10%; left:10%;
-      width:100px; height:160px;
-      background: url('boy.png') center/cover no-repeat;
+      position: absolute;
+      bottom: 10%;
+      left: 10%;
+      width: 100px;
+      height: 160px;
+      background: url('https://i.ibb.co/Nsz59J1/boy.png') center/cover no-repeat;
     }
+
     #enemy {
-      position:absolute; bottom:10%; right:-150px;
-      width:100px; height:160px;
+      position: absolute;
+      bottom: 10%;
+      right: -150px;
+      width: 100px;
+      height: 160px;
       transition: right 0.8s ease-in;
+      background: url('https://i.ibb.co/xDvBDnb/stranger1.png') center/cover no-repeat;
     }
+
     #buttons {
-      position:absolute; bottom:5%; left:50%; transform: translateX(-50%);
-      display:flex; gap:20px; z-index:10;
+      position: absolute;
+      bottom: 5%;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 20px;
+      z-index: 10;
     }
+
     button {
-      padding:10px 20px; font-size:1.2rem; border:none; border-radius:8px;
-      color:white; cursor:pointer;
+      padding: 10px 20px;
+      font-size: 1.2rem;
+      border: none;
+      border-radius: 8px;
+      color: white;
+      cursor: pointer;
     }
-    #accept { background:#4caf50; }
-    #reject { background:#f44336; }
+
+    #accept { background: #4caf50; }
+    #reject { background: #f44336; }
+
     #msg {
-      position:absolute; top:10%; width:100%; text-align:center;
-      font-size:2rem; display:none;
+      position: absolute;
+      top: 10%;
+      width: 100%;
+      text-align: center;
+      font-size: 2rem;
+      display: none;
     }
   </style>
 </head>
@@ -50,32 +87,34 @@
   <script>
     const enemy = document.getElementById('enemy');
     const msg = document.getElementById('msg');
-    const known = ['father.png','uncle.png'];
+    const known = ['father.png', 'uncle.png']; // فقط هذه الصور ترفعها أنت
     let isKnown = false;
 
     function spawn() {
-      isKnown = Math.random()<0.5;
-      const img = isKnown ?
-        known[Math.floor(Math.random()*known.length)] :
-        'stranger1.png';
-      enemy.style.background = `url('${img}') center/cover no-repeat`;
+      isKnown = Math.random() < 0.5;
+      const img = isKnown
+        ? known[Math.floor(Math.random() * known.length)]
+        : 'https://i.ibb.co/xDvBDnb/stranger1.png';
+      enemy.style.backgroundImage = `url('${img}')`;
       enemy.style.right = '20%';
     }
 
     function decide(choice) {
-      const correct = (isKnown && choice==='accept')||(!isKnown && choice==='reject');
+      const correct =
+        (isKnown && choice === 'accept') ||
+        (!isKnown && choice === 'reject');
       msg.innerText = correct ? 'أحسنت!' : 'خطأ! هذا غريب!';
       msg.style.color = correct ? 'green' : 'red';
       msg.style.display = 'block';
-      setTimeout(()=>{
-        msg.style.display='none';
-        enemy.style.right='-150px';
-        setTimeout(spawn,1000);
-      },1500);
+      setTimeout(() => {
+        msg.style.display = 'none';
+        enemy.style.right = '-150px';
+        setTimeout(spawn, 800);
+      }, 1500);
     }
 
-    document.getElementById('accept').onclick = ()=>decide('accept');
-    document.getElementById('reject').onclick = ()=>decide('reject');
+    document.getElementById('accept').onclick = () => decide('accept');
+    document.getElementById('reject').onclick = () => decide('reject');
     spawn();
   </script>
 </body>
