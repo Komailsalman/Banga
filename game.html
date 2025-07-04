@@ -3,163 +3,80 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>حقيبة الهدية</title>
+  <title>حقيبة الهدايا</title>
   <style>
-    body {
-      margin: 0;
-      padding: 0;
-      direction: rtl;
-      font-family: sans-serif;
-    }
-
-    #game-container {
-      position: relative;
-      width: 100%;
-      height: 100vh;
-      overflow: hidden;
-      background: url('road.png') repeat-x;
-      background-size: cover;
-      animation: scrollRoad 10s linear infinite;
-    }
-
-    @keyframes scrollRoad {
-      from { background-position-x: 0; }
-      to { background-position-x: -1000px; }
-    }
-
+    body { margin: 0; padding: 0; direction: rtl; font-family: sans-serif; }
+    #game { position: relative; width:100%; height:100vh; overflow:hidden;
+            background: url('road.png') repeat-x; background-size: cover;
+            animation: scroll 12s linear infinite; }
+    @keyframes scroll { from { background-position-x:0; } to { background-position-x:-800px; } }
     #player {
-      position: absolute;
-      bottom: 10%;
-      left: 10%;
-      width: 80px;
-      height: 120px;
-      background-color: #ffcc00;
-      border-radius: 10px;
+      position:absolute; bottom:10%; left:10%;
+      width:100px; height:160px;
+      background: url('boy.png') center/cover no-repeat;
     }
-
     #enemy {
-      position: absolute;
-      bottom: 10%;
-      right: -100px;
-      width: 80px;
-      height: 160px;
-      transition: right 0.5s linear;
+      position:absolute; bottom:10%; right:-150px;
+      width:100px; height:160px;
+      transition: right 0.8s ease-in;
     }
-
-    #enemy .face {
-      width: 80px;
-      height: 60px;
-      background-color: #ccc;
-      border-radius: 10px 10px 0 0;
-      background-size: cover;
-      background-position: center;
-    }
-
-    #enemy .body {
-      width: 80px;
-      height: 100px;
-      background-color: #888;
-      border-radius: 0 0 10px 10px;
-    }
-
     #buttons {
-      position: absolute;
-      bottom: 5%;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      gap: 20px;
-      z-index: 10;
+      position:absolute; bottom:5%; left:50%; transform: translateX(-50%);
+      display:flex; gap:20px; z-index:10;
     }
-
-    #buttons button {
-      font-size: 1.2rem;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
+    button {
+      padding:10px 20px; font-size:1.2rem; border:none; border-radius:8px;
+      color:white; cursor:pointer;
     }
-
-    #acceptBtn {
-      background-color: #4caf50;
-      color: white;
-    }
-
-    #rejectBtn {
-      background-color: #f44336;
-      color: white;
-    }
-
-    #message {
-      position: absolute;
-      top: 8%;
-      width: 100%;
-      text-align: center;
-      font-size: 2rem;
-      color: red;
-      display: none;
+    #accept { background:#4caf50; }
+    #reject { background:#f44336; }
+    #msg {
+      position:absolute; top:10%; width:100%; text-align:center;
+      font-size:2rem; display:none;
     }
   </style>
 </head>
 <body>
-  <div id="game-container">
+  <div id="game">
     <div id="player"></div>
-    <div id="enemy">
-      <div class="face"></div>
-      <div class="body"></div>
-    </div>
+    <div id="enemy"></div>
     <div id="buttons">
-      <button id="acceptBtn">أقبل الهدية</button>
-      <button id="rejectBtn">أرفض</button>
+      <button id="accept">أقبل الهدية</button>
+      <button id="reject">أرفض</button>
     </div>
-    <div id="message"></div>
+    <div id="msg"></div>
   </div>
 
   <script>
-    const enemy = document.getElementById("enemy");
-    const faceDiv = document.querySelector("#enemy .face");
-    const acceptBtn = document.getElementById("acceptBtn");
-    const rejectBtn = document.getElementById("rejectBtn");
-    const message = document.getElementById("message");
-
-    const knownFaces = ["father.png", "uncle.png"]; // ضع صور الأشخاص المعروفين
-    let currentFace = "";
+    const enemy = document.getElementById('enemy');
+    const msg = document.getElementById('msg');
+    const known = ['father.png','uncle.png'];
     let isKnown = false;
 
-    function spawnEnemy() {
-      const isKnownFace = Math.random() < 0.5;
-      isKnown = isKnownFace;
-      currentFace = isKnownFace
-        ? knownFaces[Math.floor(Math.random() * knownFaces.length)]
-        : "stranger.png";
-
-      faceDiv.style.backgroundImage = `url('${currentFace}')`;
-
-      enemy.style.right = "20%";
+    function spawn() {
+      isKnown = Math.random()<0.5;
+      const img = isKnown ?
+        known[Math.floor(Math.random()*known.length)] :
+        'stranger1.png';
+      enemy.style.background = `url('${img}') center/cover no-repeat`;
+      enemy.style.right = '20%';
     }
 
-    function handleChoice(choice) {
-      if ((isKnown && choice === "accept") || (!isKnown && choice === "reject")) {
-        message.innerText = "أحسنت!";
-        message.style.color = "green";
-      } else {
-        message.innerText = "خطأ! هذا غريب!";
-        message.style.color = "red";
-      }
-
-      message.style.display = "block";
-
-      setTimeout(() => {
-        message.style.display = "none";
-        enemy.style.right = "-100px";
-        setTimeout(spawnEnemy, 800);
-      }, 1500);
+    function decide(choice) {
+      const correct = (isKnown && choice==='accept')||(!isKnown && choice==='reject');
+      msg.innerText = correct ? 'أحسنت!' : 'خطأ! هذا غريب!';
+      msg.style.color = correct ? 'green' : 'red';
+      msg.style.display = 'block';
+      setTimeout(()=>{
+        msg.style.display='none';
+        enemy.style.right='-150px';
+        setTimeout(spawn,1000);
+      },1500);
     }
 
-    acceptBtn.onclick = () => handleChoice("accept");
-    rejectBtn.onclick = () => handleChoice("reject");
-
-    spawnEnemy();
+    document.getElementById('accept').onclick = ()=>decide('accept');
+    document.getElementById('reject').onclick = ()=>decide('reject');
+    spawn();
   </script>
 </body>
 </html>
